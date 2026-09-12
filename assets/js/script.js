@@ -6,6 +6,59 @@
 const elementToggleFunc = function (elem) { elem.classList.toggle("active"); }
 
 
+// Avatar blink interaction
+const avatarImgs = document.querySelectorAll(".avatar-box img");
+const avatarBox = document.querySelector(".avatar-box");
+
+if (avatarImgs.length > 0) {
+  let blinkTimeout;
+
+  const triggerBlink = () => {
+    const lightAvatar = document.querySelector(".avatar-light");
+    const darkAvatar = document.querySelector(".avatar-dark");
+
+    if (lightAvatar) lightAvatar.src = "./assets/images/my-avatar-black-eyes-closed.jpg";
+    if (darkAvatar) darkAvatar.src = "./assets/images/my-avatar-black-eyes-closed-dark.jpg";
+
+    clearTimeout(blinkTimeout);
+    blinkTimeout = setTimeout(() => {
+      if (lightAvatar) lightAvatar.src = "./assets/images/my-avatar-black-eyes.jpg";
+      if (darkAvatar) darkAvatar.src = "./assets/images/my-avatar-black-eyes-dark.jpg";
+    }, 200);
+  };
+
+  // Blink when clicking the avatar itself
+  if (avatarBox) {
+    avatarBox.addEventListener("click", triggerBlink);
+  }
+
+  // Blink when clicking any button or link anywhere on the UI
+  document.addEventListener("click", (e) => {
+    const isClickable = e.target.closest("a, button, .theme-btn");
+    const isAvatarBox = e.target.closest(".avatar-box"); // Prevent double trigger
+
+    if (isClickable && !isAvatarBox) {
+      triggerBlink();
+    }
+  });
+}
+
+
+// theme toggle functionality with view transitions
+const themeBtn = document.querySelector("[data-theme-btn]");
+
+themeBtn.addEventListener("click", function (e) {
+  if (!document.startViewTransition) {
+    document.body.classList.toggle("light-theme");
+    return;
+  }
+
+  document.startViewTransition(() => {
+    document.body.classList.toggle("light-theme");
+  });
+});
+
+
 
 // sidebar variables
 const sidebar = document.querySelector("[data-sidebar]");
@@ -50,8 +103,10 @@ for (let i = 0; i < testimonialsItem.length; i++) {
 }
 
 // add click event to modal close button
-modalCloseBtn.addEventListener("click", testimonialsModalFunc);
-overlay.addEventListener("click", testimonialsModalFunc);
+if (modalCloseBtn && overlay) {
+  modalCloseBtn.addEventListener("click", testimonialsModalFunc);
+  overlay.addEventListener("click", testimonialsModalFunc);
+}
 
 
 
@@ -113,47 +168,94 @@ for (let i = 0; i < filterBtn.length; i++) {
 
 }
 
+// skill progress animation on scroll
+const skillFills = document.querySelectorAll('.skill-progress-fill');
 
+if (skillFills.length > 0) {
+  const animateSkills = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const fill = entry.target;
+        const targetWidth = fill.getAttribute('data-width');
+        fill.style.width = targetWidth;
+        observer.unobserve(fill);
+      }
+    });
+  }, { threshold: 0.2 });
 
-// contact form variables
-const form = document.querySelector("[data-form]");
-const formInputs = document.querySelectorAll("[data-form-input]");
-const formBtn = document.querySelector("[data-form-btn]");
-
-// add event to all form input field
-for (let i = 0; i < formInputs.length; i++) {
-  formInputs[i].addEventListener("input", function () {
-
-    // check form validation
-    if (form.checkValidity()) {
-      formBtn.removeAttribute("disabled");
-    } else {
-      formBtn.setAttribute("disabled", "");
-    }
-
+  skillFills.forEach(fill => {
+    animateSkills.observe(fill);
   });
 }
-
 
 
 // page navigation variables
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
 
+// function to activate page
+const activatePage = function (targetPage) {
+  for (let i = 0; i < pages.length; i++) {
+    if (targetPage === pages[i].dataset.page) {
+      pages[i].classList.add("active");
+      navigationLinks[i].classList.add("active");
+      window.scrollTo(0, 0);
+    } else {
+      pages[i].classList.remove("active");
+      navigationLinks[i].classList.remove("active");
+    }
+  }
+};
+
 // add event to all nav link
 for (let i = 0; i < navigationLinks.length; i++) {
   navigationLinks[i].addEventListener("click", function () {
+    const targetPage = this.innerHTML.toLowerCase();
+    window.location.hash = targetPage;
+    activatePage(targetPage);
+  });
+}
 
-    for (let i = 0; i < pages.length; i++) {
-      if (this.innerHTML.toLowerCase() === pages[i].dataset.page) {
-        pages[i].classList.add("active");
-        navigationLinks[i].classList.add("active");
-        window.scrollTo(0, 0);
-      } else {
-        pages[i].classList.remove("active");
-        navigationLinks[i].classList.remove("active");
-      }
+// load initial page from hash
+window.addEventListener("DOMContentLoaded", () => {
+  const hash = window.location.hash.replace('#', '').toLowerCase();
+  if (hash) {
+    activatePage(hash);
+  }
+});
+
+// prevent browser from remembering scroll position on refresh
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+
+// aggressively clear form and remove query params on load or back-navigation
+window.addEventListener("pageshow", () => {
+  window.scrollTo(0, 0);
+
+  const contactForm = document.querySelector('[data-form]');
+  if (contactForm) {
+    contactForm.reset();
+  }
+
+  // Clean up URL if it accidentally got form parameters appended
+  if (window.location.search) {
+    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.hash;
+    window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+  }
+});
+
+// dynamically set FormSubmit redirect URL to the About page
+const formSubmitForm = document.querySelector("[data-form]");
+if (formSubmitForm) {
+  formSubmitForm.addEventListener("submit", function() {
+    let nextInput = formSubmitForm.querySelector("input[name=\"_next\"]");
+    if (!nextInput) {
+      nextInput = document.createElement("input");
+      nextInput.type = "hidden";
+      nextInput.name = "_next";
+      formSubmitForm.appendChild(nextInput);
     }
-
+    nextInput.value = window.location.origin + window.location.pathname + "#about";
   });
 }

@@ -109,6 +109,55 @@
   --transition-1: 0.25s ease;
   --transition-2: 0.5s ease-in-out;
 
+  /* glassmorphism */
+  --glass-bg: rgba(30, 30, 30, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  --glass-icon-bg: rgba(255, 255, 255, 0.05);
+
+}
+
+body.light-theme {
+  --bg-gradient-onyx: linear-gradient(to bottom right, hsl(0, 0%, 95%) 3%, hsl(0, 0%, 98%) 97%);
+  --bg-gradient-jet: linear-gradient(to bottom right, hsla(0, 0%, 100%, 0.251) 0%, hsla(0, 0%, 100%, 0) 100%), hsl(0, 0%, 95%);
+  --border-gradient-onyx: linear-gradient(to bottom right, hsl(0, 0%, 80%) 0%, hsla(0, 0%, 80%, 0) 50%);
+  
+  --jet: hsl(0, 0%, 80%);
+  --onyx: hsl(0, 0%, 90%);
+  --eerie-black-1: hsl(0, 0%, 95%);
+  --eerie-black-2: hsl(0, 0%, 100%);
+  --smoky-black: hsl(0, 0%, 96%);
+  --white-1: hsl(0, 0%, 20%);
+  --white-2: hsl(0, 0%, 10%);
+  --orange-yellow-crayola: hsl(45, 100%, 50%);
+  --vegas-gold: hsl(45, 54%, 48%);
+  --light-gray: hsl(0, 0%, 40%);
+  --light-gray-70: hsla(0, 0%, 40%, 0.7);
+
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+  --glass-icon-bg: rgba(0, 0, 0, 0.05);
+}
+
+::view-transition-old(root) {
+  animation: scaleDownBlur 0.8s cubic-bezier(0.25, 1, 0.5, 1) both;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  animation: scaleUpSharpen 0.8s cubic-bezier(0.25, 1, 0.5, 1) both;
+  mix-blend-mode: normal;
+}
+
+@keyframes scaleDownBlur {
+  0% { transform: scale(1); filter: blur(0px); opacity: 1; }
+  100% { transform: scale(0.92); filter: blur(15px); opacity: 0; }
+}
+
+@keyframes scaleUpSharpen {
+  0% { transform: scale(1.08); filter: blur(15px); opacity: 0; }
+  100% { transform: scale(1); filter: blur(0px); opacity: 1; }
 }
 
 
@@ -167,11 +216,13 @@ body { background: var(--smoky-black); }
 
 .sidebar,
 article {
-  background: var(--eerie-black-2);
-  border: 1px solid var(--jet);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
   border-radius: 20px;
   padding: 15px;
-  box-shadow: var(--shadow-1);
+  box-shadow: var(--glass-shadow);
   z-index: 1;
 }
 
@@ -184,7 +235,9 @@ article {
 
 .icon-box {
   position: relative;
-  background: var(--border-gradient-onyx);
+  background: var(--glass-icon-bg);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   width: 30px;
   height: 30px;
   border-radius: 8px;
@@ -193,17 +246,13 @@ article {
   align-items: center;
   font-size: 16px;
   color: var(--orange-yellow-crayola);
-  box-shadow: var(--shadow-1);
+  box-shadow: var(--glass-shadow);
+  border: 1px solid var(--glass-border);
   z-index: 1;
 }
 
 .icon-box::before {
-  content: "";
-  position: absolute;
-  inset: 1px;
-  background: var(--eerie-black-1);
-  border-radius: inherit;
-  z-index: -1;
+  display: none;
 }
 
 .icon-box ion-icon { --ionicon-stroke-width: 35px; }
@@ -274,26 +323,58 @@ article.active {
 
 .content-card {
   position: relative;
-  background: var(--border-gradient-onyx);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
   padding: 15px;
   padding-top: 45px;
   border-radius: 14px;
-  box-shadow: var(--shadow-2);
+  box-shadow: var(--glass-shadow);
   cursor: pointer;
   z-index: 1;
 }
 
 .content-card::before {
-  content: "";
-  position: absolute;
-  inset: 1px;
-  background: var(--bg-gradient-jet);
-  border-radius: inherit;
-  z-index: -1;
+  display: none;
 }
 
 
 
+
+
+/*-----------------------------------*\
+  #THEME BUTTON
+\*-----------------------------------*/
+
+.theme-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  color: var(--orange-yellow-crayola);
+  box-shadow: var(--glass-shadow);
+  z-index: 10;
+  transition: var(--transition-1);
+}
+
+.theme-btn:hover {
+  transform: scale(1.1);
+}
+
+.theme-btn .moon { display: none; }
+body.light-theme .theme-btn .sun { display: none; }
+body.light-theme .theme-btn .moon { display: block; }
 
 
 /*-----------------------------------*\
@@ -335,6 +416,12 @@ main {
   background: var(--bg-gradient-onyx);
   border-radius: 20px;
 }
+
+.avatar-light { display: none; }
+.avatar-dark { display: block; border-radius: 20px; }
+
+body.light-theme .avatar-light { display: block; border-radius: 20px; }
+body.light-theme .avatar-dark { display: none; }
 
 .info-content .name {
   color: var(--white-2);
@@ -459,11 +546,12 @@ main {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: hsla(240, 1%, 17%, 0.75);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--jet);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--glass-border);
   border-radius: 12px 12px 0 0;
-  box-shadow: var(--shadow-2);
+  box-shadow: var(--glass-shadow);
   z-index: 5;
 }
 
@@ -524,20 +612,18 @@ main {
 
 .service-item {
   position: relative;
-  background: var(--border-gradient-onyx);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
   padding: 20px;
   border-radius: 14px;
-  box-shadow: var(--shadow-2);
+  box-shadow: var(--glass-shadow);
   z-index: 1;
 }
 
 .service-item::before {
-  content: "";
-  position: absolute;
-  inset: 1px;
-  background: var(--bg-gradient-jet);
-  border-radius: inherit;
-  z-index: -1;
+  display: none;
 }
 
 .service-icon-box { margin-bottom: 10px; }
@@ -865,6 +951,7 @@ main {
   background: var(--text-gradient-yellow);
   height: 100%;
   border-radius: inherit;
+  transition: width 1s ease-in-out;
 }
 
 
@@ -1394,7 +1481,7 @@ textarea.form-input::-webkit-resizer { display: none; }
   .service-item {
     display: flex;
     justify-content: flex-start;
-    align-items: flex-start;
+    align-items: center;
     gap: 18px;
     padding: 30px;
   }
