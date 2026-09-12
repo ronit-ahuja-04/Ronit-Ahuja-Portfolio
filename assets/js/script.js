@@ -259,3 +259,58 @@ if (formSubmitForm) {
     nextInput.value = window.location.origin + window.location.pathname + "#about";
   });
 }
+
+
+// --- APPLE-STYLE BOOT ANIMATION ---
+document.body.classList.add("loading");
+
+window.addEventListener("load", function() {
+  const avatar = document.querySelector(".avatar-box");
+  
+  if (avatar) {
+    // 1. Calculate center of viewport
+    const viewportCenterX = window.innerWidth / 2;
+    const viewportCenterY = window.innerHeight / 2;
+    
+    // 2. Get exact center of avatar in its normal position
+    const rect = avatar.getBoundingClientRect();
+    const avatarCenterX = rect.left + (rect.width / 2);
+    const avatarCenterY = rect.top + (rect.height / 2);
+    
+    // 3. Calculate translate required to push it to viewport center
+    const translateX = viewportCenterX - avatarCenterX;
+    const translateY = viewportCenterY - avatarCenterY;
+    
+    // 4. Force layout instantly (scale 3x, centered)
+    avatar.style.transition = "none";
+    avatar.style.transform = `translate(${translateX}px, ${translateY}px) scale(3)`;
+    
+    // Force browser reflow to apply the instant CSS
+    avatar.getBoundingClientRect(); 
+    
+    // 5. Trigger animation shortly after load
+    setTimeout(() => {
+      // Smooth Apple spring transition back to origin
+      avatar.style.transition = "transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)";
+      avatar.style.transform = "translate(0px, 0px) scale(1)";
+      
+      // 6. Cascade the rest of the UI slightly after avatar starts moving
+      setTimeout(() => {
+        document.body.classList.remove("loading");
+        document.body.classList.add("loaded");
+        
+        // Clean up inline styles after animation finishes
+        setTimeout(() => {
+          avatar.style.transition = "";
+          avatar.style.transform = "";
+        }, 1200);
+        
+      }, 400); // 400ms delay before UI cascades up
+      
+    }, 100); // 100ms pause to show centered avatar
+  } else {
+    // Fallback
+    document.body.classList.remove("loading");
+    document.body.classList.add("loaded");
+  }
+});

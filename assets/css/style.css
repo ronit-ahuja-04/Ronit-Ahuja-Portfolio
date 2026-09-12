@@ -1967,3 +1967,52 @@ textarea.form-input::-webkit-resizer { display: none; }
   .timeline-text { max-width: 700px; }
 
 }
+
+/* --- APPLE-STYLE BOOT ANIMATION --- */
+
+/* Allow avatar scaling without clipping */
+body.loading .sidebar {
+  overflow: visible !important;
+}
+
+/* Avatar Intro state */
+.avatar-box {
+  transform-origin: center center;
+  z-index: 1000;
+  position: relative;
+  will-change: transform;
+}
+
+/* Hide UI elements initially */
+body.loading .info-content,
+body.loading .sidebar-info_more,
+body.loading .separator,
+body.loading .social-list,
+body.loading .main-content,
+body.loading .navbar {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: none;
+  pointer-events: none;
+}
+
+/* Spring transition for elements */
+body.loaded .info-content,
+body.loaded .sidebar-info_more,
+body.loaded .separator,
+body.loaded .social-list,
+body.loaded .main-content,
+body.loaded .navbar {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.8s ease, transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: all;
+}
+
+/* Stagger delays */
+body.loaded .info-content { transition-delay: 0.1s; }
+body.loaded .sidebar-info_more { transition-delay: 0.15s; }
+body.loaded .separator { transition-delay: 0.2s; }
+body.loaded .social-list { transition-delay: 0.25s; }
+body.loaded .main-content { transition-delay: 0.3s; }
+body.loaded .navbar { transition-delay: 0.4s; }
