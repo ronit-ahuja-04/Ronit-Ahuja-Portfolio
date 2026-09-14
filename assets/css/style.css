@@ -2246,3 +2246,23 @@ body.loaded .navbar { transition-delay: 0.4s; }
 .video-modal-container :focus {
   outline: none !important;
 }
+
+/* --- RESUME DOWNLOAD BUTTON --- */
+.resume-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.resume-header .article-title {
+  margin-bottom: 0;
+}
+
+.download-btn {
+  width: auto;
+  padding: 10px 20px;
+  font-size: var(--fs-6);
+  border-radius: 12px;
+  max-height: 48px;
+}
