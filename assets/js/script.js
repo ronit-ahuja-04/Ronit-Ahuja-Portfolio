@@ -436,13 +436,29 @@ if (videoModalContainer && projectVideoPlayer) {
   });
 
   // Fullscreen
-  btnFullscreen.addEventListener("click", () => {
+  const expandIcon = document.querySelector(".expand-icon");
+  const contractIcon = document.querySelector(".contract-icon");
+
+  const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       videoWrapper.requestFullscreen().catch(err => {
         console.error(`Error attempting to enable fullscreen: ${err.message}`);
       });
     } else {
       document.exitFullscreen();
+    }
+  };
+
+  btnFullscreen.addEventListener("click", toggleFullscreen);
+  projectVideoPlayer.addEventListener("dblclick", toggleFullscreen);
+
+  document.addEventListener("fullscreenchange", () => {
+    if (document.fullscreenElement) {
+      expandIcon.style.display = "none";
+      if (contractIcon) contractIcon.style.display = "block";
+    } else {
+      expandIcon.style.display = "block";
+      if (contractIcon) contractIcon.style.display = "none";
     }
   });
 }

@@ -718,8 +718,8 @@
         </video>
 
         <div class="video-controls-overlay">
-          <button class="control-btn" data-skip="-10" title="Rewind 10s">
-            <ion-icon name="play-back-outline"></ion-icon>
+          <button class="control-btn skip-btn" data-skip="-10" title="Rewind 10s">
+            <span style="font-size: 16px; font-weight: bold; font-family: var(--ff-poppins);">-10s</span>
           </button>
           
           <button class="control-btn" data-play-pause title="Play/Pause">
@@ -727,8 +727,8 @@
             <ion-icon name="pause-outline" class="pause-icon" style="display: none;"></ion-icon>
           </button>
           
-          <button class="control-btn" data-skip="10" title="Forward 10s">
-            <ion-icon name="play-forward-outline"></ion-icon>
+          <button class="control-btn skip-btn" data-skip="10" title="Forward 10s">
+            <span style="font-size: 16px; font-weight: bold; font-family: var(--ff-poppins);">+10s</span>
           </button>
           
           <div class="volume-container">
@@ -740,7 +740,8 @@
           </div>
 
           <button class="control-btn" data-fullscreen title="Full Screen">
-            <ion-icon name="expand-outline"></ion-icon>
+            <ion-icon name="expand-outline" class="expand-icon"></ion-icon>
+            <ion-icon name="contract-outline" class="contract-icon" style="display: none;"></ion-icon>
           </button>
         </div>
       </div>
