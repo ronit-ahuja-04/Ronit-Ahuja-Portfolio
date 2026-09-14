@@ -370,8 +370,14 @@ if (videoModalContainer && projectVideoPlayer) {
     link.addEventListener("click", (e) => {
       e.preventDefault();
       const videoSrc = link.getAttribute("data-video");
+      const videoPoster = link.getAttribute("data-poster");
       if (videoSrc) {
         projectVideoPlayer.src = videoSrc;
+        if (videoPoster) {
+          projectVideoPlayer.poster = videoPoster;
+        } else {
+          projectVideoPlayer.removeAttribute("poster");
+        }
         videoModalContainer.classList.add("active");
         projectVideoPlayer.play().catch(err => console.log("Autoplay prevented:", err));
         updatePlayPauseIcon();
