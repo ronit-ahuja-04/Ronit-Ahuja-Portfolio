@@ -314,3 +314,135 @@ window.addEventListener("load", function() {
     document.body.classList.add("loaded");
   }
 });
+
+// --- VIDEO MODAL WALKTHROUGH ---
+const videoModalContainer = document.querySelector("[data-video-modal-container]");
+const videoOverlay = document.querySelector("[data-video-overlay]");
+const videoModalCloseBtn = document.querySelector("[data-video-modal-close-btn]");
+const projectVideoPlayer = document.getElementById("project-video-player");
+const projectLinks = document.querySelectorAll(".project-item a[data-video]");
+
+// Control buttons
+const btnPlayPause = document.querySelector("[data-play-pause]");
+const playIcon = document.querySelector(".play-icon");
+const pauseIcon = document.querySelector(".pause-icon");
+const skipBtns = document.querySelectorAll("[data-skip]");
+const btnMute = document.querySelector("[data-mute]");
+const volHighIcon = document.querySelector(".vol-high-icon");
+const volMuteIcon = document.querySelector(".vol-mute-icon");
+const volumeSlider = document.querySelector("[data-volume]");
+const btnFullscreen = document.querySelector("[data-fullscreen]");
+const videoWrapper = document.querySelector(".video-wrapper");
+
+const closeVideoModal = () => {
+  if (videoModalContainer) {
+    videoModalContainer.classList.remove("active");
+    if (projectVideoPlayer) {
+      projectVideoPlayer.pause();
+      projectVideoPlayer.currentTime = 0;
+    }
+  }
+};
+
+const updatePlayPauseIcon = () => {
+  if (projectVideoPlayer.paused) {
+    playIcon.style.display = "block";
+    pauseIcon.style.display = "none";
+  } else {
+    playIcon.style.display = "none";
+    pauseIcon.style.display = "block";
+  }
+};
+
+const updateVolumeIcon = () => {
+  if (projectVideoPlayer.muted || projectVideoPlayer.volume === 0) {
+    volHighIcon.style.display = "none";
+    volMuteIcon.style.display = "block";
+  } else {
+    volHighIcon.style.display = "block";
+    volMuteIcon.style.display = "none";
+  }
+};
+
+if (videoModalContainer && projectVideoPlayer) {
+  // Open modal on project click
+  projectLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const videoSrc = link.getAttribute("data-video");
+      if (videoSrc) {
+        projectVideoPlayer.src = videoSrc;
+        videoModalContainer.classList.add("active");
+        projectVideoPlayer.play().catch(err => console.log("Autoplay prevented:", err));
+        updatePlayPauseIcon();
+      }
+    });
+  });
+
+  // Close modal
+  videoModalCloseBtn.addEventListener("click", closeVideoModal);
+  videoOverlay.addEventListener("click", closeVideoModal);
+
+  // Play/Pause
+  btnPlayPause.addEventListener("click", () => {
+    if (projectVideoPlayer.paused) {
+      projectVideoPlayer.play();
+    } else {
+      projectVideoPlayer.pause();
+    }
+    updatePlayPauseIcon();
+  });
+
+  // Click on video to play/pause
+  projectVideoPlayer.addEventListener("click", () => {
+    if (projectVideoPlayer.paused) {
+      projectVideoPlayer.play();
+    } else {
+      projectVideoPlayer.pause();
+    }
+    updatePlayPauseIcon();
+  });
+
+  projectVideoPlayer.addEventListener("play", updatePlayPauseIcon);
+  projectVideoPlayer.addEventListener("pause", updatePlayPauseIcon);
+
+  // Skip buttons (+10s, -10s)
+  skipBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const skipAmount = parseFloat(btn.getAttribute("data-skip"));
+      projectVideoPlayer.currentTime += skipAmount;
+    });
+  });
+
+  // Volume
+  volumeSlider.addEventListener("input", (e) => {
+    projectVideoPlayer.volume = e.target.value;
+    projectVideoPlayer.muted = e.target.value === "0";
+    updateVolumeIcon();
+  });
+
+  btnMute.addEventListener("click", () => {
+    projectVideoPlayer.muted = !projectVideoPlayer.muted;
+    if (projectVideoPlayer.muted) {
+      volumeSlider.value = 0;
+    } else {
+      volumeSlider.value = projectVideoPlayer.volume || 1;
+      if (projectVideoPlayer.volume === 0) {
+          projectVideoPlayer.volume = 1;
+          volumeSlider.value = 1;
+      }
+    }
+    updateVolumeIcon();
+  });
+
+  // Fullscreen
+  btnFullscreen.addEventListener("click", () => {
+    if (!document.fullscreenElement) {
+      videoWrapper.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  });
+}
