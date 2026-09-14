@@ -407,10 +407,26 @@ if (videoModalContainer && projectVideoPlayer) {
   projectVideoPlayer.addEventListener("pause", updatePlayPauseIcon);
 
   // Skip buttons (+10s, -10s)
+  const feedbackBadge = document.getElementById("feedback-badge");
+  const feedbackText = document.getElementById("feedback-text");
+  let feedbackTimeout;
+
+  const showFeedback = (text) => {
+    if (!feedbackBadge || !feedbackText) return;
+    feedbackText.textContent = text;
+    feedbackBadge.classList.add("show");
+    
+    clearTimeout(feedbackTimeout);
+    feedbackTimeout = setTimeout(() => {
+      feedbackBadge.classList.remove("show");
+    }, 800);
+  };
+
   skipBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       const skipAmount = parseFloat(btn.getAttribute("data-skip"));
       projectVideoPlayer.currentTime += skipAmount;
+      showFeedback(skipAmount > 0 ? `+${skipAmount}s` : `${skipAmount}s`);
     });
   });
 
@@ -461,4 +477,68 @@ if (videoModalContainer && projectVideoPlayer) {
       if (contractIcon) contractIcon.style.display = "none";
     }
   });
+
+  // Keyboard Shortcuts
+  document.addEventListener("keydown", (e) => {
+    if (!videoModalContainer.classList.contains("active")) return;
+    
+    // Prevent default scrolling for space and arrows
+    if (["Space", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)) {
+      e.preventDefault();
+    }
+
+    switch (e.code) {
+      case "Escape":
+        closeVideoModal();
+        break;
+      case "Space":
+        if (projectVideoPlayer.paused) {
+          projectVideoPlayer.play();
+          showFeedback("Play");
+        } else {
+          projectVideoPlayer.pause();
+          showFeedback("Pause");
+        }
+        updatePlayPauseIcon();
+        break;
+      case "ArrowLeft":
+        projectVideoPlayer.currentTime -= 10;
+        showFeedback("-10s");
+        break;
+      case "ArrowRight":
+        projectVideoPlayer.currentTime += 10;
+        showFeedback("+10s");
+        break;
+      case "ArrowUp":
+        projectVideoPlayer.volume = Math.min(1, projectVideoPlayer.volume + 0.1);
+        projectVideoPlayer.muted = false;
+        volumeSlider.value = projectVideoPlayer.volume;
+        showFeedback(`${Math.round(projectVideoPlayer.volume * 100)}%`);
+        updateVolumeIcon();
+        break;
+      case "ArrowDown":
+        projectVideoPlayer.volume = Math.max(0, projectVideoPlayer.volume - 0.1);
+        if (projectVideoPlayer.volume === 0) projectVideoPlayer.muted = true;
+        volumeSlider.value = projectVideoPlayer.volume;
+        showFeedback(`${Math.round(projectVideoPlayer.volume * 100)}%`);
+        updateVolumeIcon();
+        break;
+      case "KeyM":
+        projectVideoPlayer.muted = !projectVideoPlayer.muted;
+        if (projectVideoPlayer.muted) {
+          volumeSlider.value = 0;
+          showFeedback("Muted");
+        } else {
+          volumeSlider.value = projectVideoPlayer.volume || 1;
+          if (projectVideoPlayer.volume === 0) {
+            projectVideoPlayer.volume = 1;
+            volumeSlider.value = 1;
+          }
+          showFeedback(`${Math.round(projectVideoPlayer.volume * 100)}%`);
+        }
+        updateVolumeIcon();
+        break;
+    }
+  });
+
 }
