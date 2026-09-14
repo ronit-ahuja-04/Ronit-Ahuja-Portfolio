@@ -409,11 +409,18 @@ if (videoModalContainer && projectVideoPlayer) {
   // Skip buttons (+10s, -10s)
   const feedbackBadge = document.getElementById("feedback-badge");
   const feedbackText = document.getElementById("feedback-text");
+  const feedbackOverlay = document.getElementById("video-feedback");
   let feedbackTimeout;
 
-  const showFeedback = (text) => {
-    if (!feedbackBadge || !feedbackText) return;
-    feedbackText.textContent = text;
+  const showFeedback = (content, position = "center") => {
+    if (!feedbackBadge || !feedbackText || !feedbackOverlay) return;
+    
+    // Reset positions
+    feedbackOverlay.className = "video-feedback-overlay";
+    if (position === "left") feedbackOverlay.classList.add("pos-left");
+    if (position === "right") feedbackOverlay.classList.add("pos-right");
+
+    feedbackText.innerHTML = content;
     feedbackBadge.classList.add("show");
     
     clearTimeout(feedbackTimeout);
@@ -426,7 +433,7 @@ if (videoModalContainer && projectVideoPlayer) {
     btn.addEventListener("click", () => {
       const skipAmount = parseFloat(btn.getAttribute("data-skip"));
       projectVideoPlayer.currentTime += skipAmount;
-      showFeedback(skipAmount > 0 ? `+${skipAmount}s` : `${skipAmount}s`);
+      showFeedback(skipAmount > 0 ? `+${skipAmount}s` : `${skipAmount}s`, skipAmount > 0 ? "right" : "left");
     });
   });
 
@@ -489,25 +496,32 @@ if (videoModalContainer && projectVideoPlayer) {
 
     switch (e.code) {
       case "Escape":
-        closeVideoModal();
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          closeVideoModal();
+        }
+        break;
+      case "KeyF":
+        toggleFullscreen();
         break;
       case "Space":
         if (projectVideoPlayer.paused) {
           projectVideoPlayer.play();
-          showFeedback("Play");
+          showFeedback('<ion-icon name="play" style="font-size:24px; margin-bottom:-4px;"></ion-icon>');
         } else {
           projectVideoPlayer.pause();
-          showFeedback("Pause");
+          showFeedback('<ion-icon name="pause" style="font-size:24px; margin-bottom:-4px;"></ion-icon>');
         }
         updatePlayPauseIcon();
         break;
       case "ArrowLeft":
         projectVideoPlayer.currentTime -= 10;
-        showFeedback("-10s");
+        showFeedback("-10s", "left");
         break;
       case "ArrowRight":
         projectVideoPlayer.currentTime += 10;
-        showFeedback("+10s");
+        showFeedback("+10s", "right");
         break;
       case "ArrowUp":
         projectVideoPlayer.volume = Math.min(1, projectVideoPlayer.volume + 0.1);
