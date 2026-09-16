@@ -2467,6 +2467,7 @@ body.loaded .navbar { transition-delay: 0.4s; }
   width: 100%;
   height: 100%;
   min-height: 450px;
+  max-height: 550px;
   background: #000;
   border-radius: 10px;
   overflow: hidden;

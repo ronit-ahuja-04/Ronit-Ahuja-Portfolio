@@ -470,147 +470,223 @@ if (videoModalContainer && projectVideoPlayer) {
     });
   });
 
+
   // Close modal
   videoModalCloseBtn.addEventListener("click", closeVideoModal);
   videoOverlay.addEventListener("click", closeVideoModal);
 
-  // Play/Pause
-  btnPlayPause.addEventListener("click", () => {
-    if (projectVideoPlayer.paused) {
-      projectVideoPlayer.play();
-    } else {
-      projectVideoPlayer.pause();
-    }
-    updatePlayPauseIcon();
-  });
+  let activeVideoPlayer = projectVideoPlayer;
 
-  // Click on video to play/pause
-  projectVideoPlayer.addEventListener("click", () => {
-    if (projectVideoPlayer.paused) {
-      projectVideoPlayer.play();
-    } else {
-      projectVideoPlayer.pause();
-    }
-    updatePlayPauseIcon();
-  });
+  const setupVideoControls = (wrapper) => {
+    const video = wrapper.querySelector("video");
+    if (!video) return;
 
-  projectVideoPlayer.addEventListener("play", updatePlayPauseIcon);
-  projectVideoPlayer.addEventListener("pause", updatePlayPauseIcon);
-
-  // Skip buttons (+10s, -10s)
-  const feedbackBadge = document.getElementById("feedback-badge");
-  const feedbackText = document.getElementById("feedback-text");
-  const feedbackOverlay = document.getElementById("video-feedback");
-  let feedbackTimeout;
-
-  const showFeedback = (content, position = "center") => {
-    if (!feedbackBadge || !feedbackText || !feedbackOverlay) return;
+    // Controls
+    const btnPlayPause = wrapper.querySelector("[data-play-pause]");
+    const playIcon = wrapper.querySelector(".play-icon");
+    const pauseIcon = wrapper.querySelector(".pause-icon");
     
-    // Reset positions
-    feedbackOverlay.className = "video-feedback-overlay";
-    if (position === "left") feedbackOverlay.classList.add("pos-left");
-    if (position === "right") feedbackOverlay.classList.add("pos-right");
-
-    feedbackText.innerHTML = content;
-    feedbackBadge.classList.add("show");
+    const volumeSlider = wrapper.querySelector("[data-volume]");
+    const btnMute = wrapper.querySelector("[data-mute]");
+    const volHighIcon = wrapper.querySelector(".vol-high-icon");
+    const volMuteIcon = wrapper.querySelector(".vol-mute-icon");
     
-    clearTimeout(feedbackTimeout);
-    feedbackTimeout = setTimeout(() => {
-      feedbackBadge.classList.remove("show");
-    }, 800);
-  };
+    const btnFullscreen = wrapper.querySelector("[data-fullscreen]");
+    const expandIcon = wrapper.querySelector(".expand-icon");
+    const contractIcon = wrapper.querySelector(".contract-icon");
+    
+    const skipBtns = wrapper.querySelectorAll("[data-skip]");
+    
+    const videoTimeline = wrapper.querySelector(".video-timeline");
+    const currentTimeElem = wrapper.querySelector(".current-time");
+    const videoDurationElem = wrapper.querySelector(".video-duration");
 
-  skipBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const skipAmount = parseFloat(btn.getAttribute("data-skip"));
-      projectVideoPlayer.currentTime += skipAmount;
-      showFeedback(skipAmount > 0 ? `+${skipAmount}s` : `${skipAmount}s`, skipAmount > 0 ? "right" : "left");
-    });
-  });
+    const feedbackBadge = wrapper.querySelector(".feedback-badge");
+    const feedbackText = wrapper.querySelector(".feedback-text");
+    const feedbackOverlay = wrapper.querySelector(".video-feedback-overlay");
+    let feedbackTimeout;
 
-  // Volume
-  volumeSlider.addEventListener("input", (e) => {
-    projectVideoPlayer.volume = e.target.value;
-    projectVideoPlayer.muted = e.target.value === "0";
-    updateVolumeIcon();
-  });
+    // Track active video
+    wrapper.addEventListener("mouseenter", () => activeVideoPlayer = video);
+    wrapper.addEventListener("click", () => activeVideoPlayer = video);
+    video.addEventListener("play", () => activeVideoPlayer = video);
 
-  btnMute.addEventListener("click", () => {
-    projectVideoPlayer.muted = !projectVideoPlayer.muted;
-    if (projectVideoPlayer.muted) {
-      volumeSlider.value = 0;
-    } else {
-      volumeSlider.value = projectVideoPlayer.volume || 1;
-      if (projectVideoPlayer.volume === 0) {
-          projectVideoPlayer.volume = 1;
-          volumeSlider.value = 1;
+    const updatePlayPauseIcon = () => {
+      if (!playIcon || !pauseIcon) return;
+      if (video.paused) {
+        playIcon.style.display = "block";
+        pauseIcon.style.display = "none";
+      } else {
+        playIcon.style.display = "none";
+        pauseIcon.style.display = "block";
       }
-    }
-    updateVolumeIcon();
-  });
+    };
 
-  // Fullscreen
-  const expandIcon = document.querySelector(".expand-icon");
-  const contractIcon = document.querySelector(".contract-icon");
+    const updateVolumeIcon = () => {
+      if (!volHighIcon || !volMuteIcon) return;
+      if (video.muted || video.volume === 0) {
+        volHighIcon.style.display = "none";
+        volMuteIcon.style.display = "block";
+      } else {
+        volHighIcon.style.display = "block";
+        volMuteIcon.style.display = "none";
+      }
+    };
 
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      videoWrapper.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+    const showFeedback = (content, position = "center") => {
+      if (!feedbackBadge || !feedbackText || !feedbackOverlay) return;
+      feedbackOverlay.className = "video-feedback-overlay";
+      if (position === "left") feedbackOverlay.classList.add("pos-left");
+      if (position === "right") feedbackOverlay.classList.add("pos-right");
+      feedbackText.innerHTML = content;
+      feedbackBadge.classList.add("show");
+      clearTimeout(feedbackTimeout);
+      feedbackTimeout = setTimeout(() => {
+        feedbackBadge.classList.remove("show");
+      }, 800);
+    };
+
+    if (btnPlayPause) {
+      btnPlayPause.addEventListener("click", () => {
+        if (video.paused) video.play();
+        else video.pause();
+        updatePlayPauseIcon();
       });
-    } else {
-      document.exitFullscreen();
+    }
+
+    video.addEventListener("click", () => {
+      if (video.paused) video.play();
+      else video.pause();
+      updatePlayPauseIcon();
+    });
+
+    video.addEventListener("play", updatePlayPauseIcon);
+    video.addEventListener("pause", updatePlayPauseIcon);
+
+    skipBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const skipAmount = parseFloat(btn.getAttribute("data-skip"));
+        video.currentTime += skipAmount;
+        showFeedback(skipAmount > 0 ? `+${skipAmount}s` : `${skipAmount}s`, skipAmount > 0 ? "right" : "left");
+      });
+    });
+
+    if (volumeSlider) {
+      volumeSlider.addEventListener("input", (e) => {
+        video.volume = e.target.value;
+        video.muted = e.target.value === "0";
+        updateVolumeIcon();
+      });
+    }
+
+    if (btnMute) {
+      btnMute.addEventListener("click", () => {
+        video.muted = !video.muted;
+        if (video.muted) {
+          if(volumeSlider) volumeSlider.value = 0;
+        } else {
+          if(volumeSlider) volumeSlider.value = video.volume || 1;
+          if (video.volume === 0) {
+              video.volume = 1;
+              if(volumeSlider) volumeSlider.value = 1;
+          }
+        }
+        updateVolumeIcon();
+      });
+    }
+
+    const toggleFullscreen = () => {
+      if (!document.fullscreenElement) {
+        wrapper.requestFullscreen().catch(err => {
+          console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    };
+
+    if (btnFullscreen) btnFullscreen.addEventListener("click", toggleFullscreen);
+    video.addEventListener("dblclick", toggleFullscreen);
+
+    document.addEventListener("fullscreenchange", () => {
+      if (!expandIcon) return;
+      if (document.fullscreenElement === wrapper) {
+        expandIcon.style.display = "none";
+        if (contractIcon) contractIcon.style.display = "block";
+      } else {
+        expandIcon.style.display = "block";
+        if (contractIcon) contractIcon.style.display = "none";
+      }
+    });
+
+    const formatTime = (time) => {
+      let min = Math.floor(time / 60);
+      let sec = Math.floor(time % 60);
+      sec = sec < 10 ? `0${sec}` : sec;
+      return `${min}:${sec}`;
+    };
+
+    if (videoTimeline && currentTimeElem && videoDurationElem) {
+      video.addEventListener("loadedmetadata", () => {
+        videoTimeline.max = video.duration;
+        videoDurationElem.textContent = formatTime(video.duration);
+      });
+      video.addEventListener("timeupdate", () => {
+        videoTimeline.value = video.currentTime;
+        currentTimeElem.textContent = formatTime(video.currentTime);
+      });
+      videoTimeline.addEventListener("input", (e) => {
+        video.currentTime = e.target.value;
+        currentTimeElem.textContent = formatTime(e.target.value);
+      });
     }
   };
 
-  btnFullscreen.addEventListener("click", toggleFullscreen);
-  projectVideoPlayer.addEventListener("dblclick", toggleFullscreen);
-
-  document.addEventListener("fullscreenchange", () => {
-    if (document.fullscreenElement) {
-      expandIcon.style.display = "none";
-      if (contractIcon) contractIcon.style.display = "block";
-    } else {
-      expandIcon.style.display = "block";
-      if (contractIcon) contractIcon.style.display = "none";
-    }
-  });
-
-  // Timeline logic
-  const videoTimeline = document.getElementById("video-timeline");
-  const currentTimeElem = document.getElementById("current-time");
-  const videoDurationElem = document.getElementById("video-duration");
-
-  const formatTime = (time) => {
-    let min = Math.floor(time / 60);
-    let sec = Math.floor(time % 60);
-    sec = sec < 10 ? `0${sec}` : sec;
-    return `${min}:${sec}`;
-  };
-
-  projectVideoPlayer.addEventListener("loadedmetadata", () => {
-    videoTimeline.max = projectVideoPlayer.duration;
-    videoDurationElem.textContent = formatTime(projectVideoPlayer.duration);
-  });
-
-  projectVideoPlayer.addEventListener("timeupdate", () => {
-    videoTimeline.value = projectVideoPlayer.currentTime;
-    currentTimeElem.textContent = formatTime(projectVideoPlayer.currentTime);
-  });
-
-  videoTimeline.addEventListener("input", (e) => {
-    projectVideoPlayer.currentTime = e.target.value;
-    currentTimeElem.textContent = formatTime(e.target.value);
-  });
+  const videoWrappers = document.querySelectorAll('.video-wrapper');
+  videoWrappers.forEach(setupVideoControls);
 
   // Keyboard Shortcuts
   document.addEventListener("keydown", (e) => {
     if (!videoModalContainer.classList.contains("active")) return;
     
-    // Prevent default scrolling for space and arrows
     if (["Space", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)) {
       e.preventDefault();
     }
+
+    const video = activeVideoPlayer;
+    if (!video) return;
+    const wrapper = video.closest('.video-wrapper');
+    const showFeedback = (content, position="center") => {
+      const fb = wrapper.querySelector(".feedback-text");
+      const badge = wrapper.querySelector(".feedback-badge");
+      const overlay = wrapper.querySelector(".video-feedback-overlay");
+      if(fb && badge && overlay) {
+        overlay.className = "video-feedback-overlay";
+        if (position === "left") overlay.classList.add("pos-left");
+        if (position === "right") overlay.classList.add("pos-right");
+        fb.innerHTML = content;
+        badge.classList.add("show");
+        setTimeout(() => badge.classList.remove("show"), 800);
+      }
+    };
+    
+    const updatePlayIcon = () => {
+       const pI = wrapper.querySelector(".play-icon");
+       const paI = wrapper.querySelector(".pause-icon");
+       if(pI && paI) {
+           pI.style.display = video.paused ? "block" : "none";
+           paI.style.display = video.paused ? "none" : "block";
+       }
+    };
+    
+    const updateVolIcon = () => {
+       const vH = wrapper.querySelector(".vol-high-icon");
+       const vM = wrapper.querySelector(".vol-mute-icon");
+       if(vH && vM) {
+           vH.style.display = (video.muted || video.volume === 0) ? "none" : "block";
+           vM.style.display = (video.muted || video.volume === 0) ? "block" : "none";
+       }
+    };
 
     switch (e.code) {
       case "Escape":
@@ -621,54 +697,48 @@ if (videoModalContainer && projectVideoPlayer) {
         }
         break;
       case "KeyF":
-        toggleFullscreen();
+        if (!document.fullscreenElement) wrapper.requestFullscreen();
+        else document.exitFullscreen();
         break;
       case "Space":
-        if (projectVideoPlayer.paused) {
-          projectVideoPlayer.play();
+        if (video.paused) {
+          video.play();
           showFeedback('<ion-icon name="play" style="font-size:24px; margin-bottom:-4px;"></ion-icon>');
         } else {
-          projectVideoPlayer.pause();
+          video.pause();
           showFeedback('<ion-icon name="pause" style="font-size:24px; margin-bottom:-4px;"></ion-icon>');
         }
-        updatePlayPauseIcon();
+        updatePlayIcon();
         break;
       case "ArrowLeft":
-        projectVideoPlayer.currentTime -= 10;
+        video.currentTime -= 10;
         showFeedback("-10s", "left");
         break;
       case "ArrowRight":
-        projectVideoPlayer.currentTime += 10;
+        video.currentTime += 10;
         showFeedback("+10s", "right");
         break;
       case "ArrowUp":
-        projectVideoPlayer.volume = Math.min(1, projectVideoPlayer.volume + 0.1);
-        projectVideoPlayer.muted = false;
-        volumeSlider.value = projectVideoPlayer.volume;
-        showFeedback(`${Math.round(projectVideoPlayer.volume * 100)}%`);
-        updateVolumeIcon();
+        video.volume = Math.min(1, video.volume + 0.1);
+        video.muted = false;
+        showFeedback(`${Math.round(video.volume * 100)}%`);
+        updateVolIcon();
         break;
       case "ArrowDown":
-        projectVideoPlayer.volume = Math.max(0, projectVideoPlayer.volume - 0.1);
-        if (projectVideoPlayer.volume === 0) projectVideoPlayer.muted = true;
-        volumeSlider.value = projectVideoPlayer.volume;
-        showFeedback(`${Math.round(projectVideoPlayer.volume * 100)}%`);
-        updateVolumeIcon();
+        video.volume = Math.max(0, video.volume - 0.1);
+        if (video.volume === 0) video.muted = true;
+        showFeedback(`${Math.round(video.volume * 100)}%`);
+        updateVolIcon();
         break;
       case "KeyM":
-        projectVideoPlayer.muted = !projectVideoPlayer.muted;
-        if (projectVideoPlayer.muted) {
-          volumeSlider.value = 0;
+        video.muted = !video.muted;
+        if (video.muted) {
           showFeedback("Muted");
         } else {
-          volumeSlider.value = projectVideoPlayer.volume || 1;
-          if (projectVideoPlayer.volume === 0) {
-            projectVideoPlayer.volume = 1;
-            volumeSlider.value = 1;
-          }
-          showFeedback(`${Math.round(projectVideoPlayer.volume * 100)}%`);
+          if (video.volume === 0) video.volume = 1;
+          showFeedback(`${Math.round(video.volume * 100)}%`);
         }
-        updateVolumeIcon();
+        updateVolIcon();
         break;
     }
   });
