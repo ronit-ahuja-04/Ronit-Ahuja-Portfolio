@@ -544,23 +544,26 @@ body.light-theme .avatar-dark { display: none; }
 .menu-btn {
   position: fixed;
   top: 20px;
-  right: 20px;
-  background: var(--eerie-black-1);
+  right: 80px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  font-size: 20px;
   color: var(--orange-yellow-crayola);
-  border: 1px solid var(--jet);
-  border-radius: 8px;
-  padding: 10px;
-  font-size: 24px;
-  z-index: 20;
+  z-index: 10;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: var(--shadow-1);
+  box-shadow: var(--glass-shadow);
   transition: var(--transition-1);
 }
 
 .menu-btn:hover {
-  background: var(--eerie-black-2);
+  transform: scale(1.1);
 }
 
 /*-----------------------------------*\
