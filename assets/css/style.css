@@ -2130,6 +2130,15 @@ body.loaded .navbar { transition-delay: 0.4s; }
   opacity: 1;
 }
 
+/* Modifiers for vertical video */
+.video-modal-content.vertical-video {
+  max-width: 450px;
+  border-radius: 30px;
+}
+.video-modal-content.vertical-video .video-wrapper {
+  border-radius: 20px;
+}
+
 .video-modal-close-btn {
   position: absolute;
   top: -15px;

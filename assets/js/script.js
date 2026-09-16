@@ -332,6 +332,7 @@ const videoOverlay = document.querySelector("[data-video-overlay]");
 const videoModalCloseBtn = document.querySelector("[data-video-modal-close-btn]");
 const projectVideoPlayer = document.getElementById("project-video-player");
 const projectLinks = document.querySelectorAll(".project-item a[data-video]");
+const videoModalContent = document.querySelector(".video-modal-content");
 
 // Control buttons
 const btnPlayPause = document.querySelector("[data-play-pause]");
@@ -376,6 +377,16 @@ const updateVolumeIcon = () => {
 };
 
 if (videoModalContainer && projectVideoPlayer) {
+  
+  // Dynamically size modal for vertical videos
+  projectVideoPlayer.addEventListener("loadedmetadata", () => {
+    if (projectVideoPlayer.videoHeight > projectVideoPlayer.videoWidth) {
+      videoModalContent.classList.add("vertical-video");
+    } else {
+      videoModalContent.classList.remove("vertical-video");
+    }
+  });
+
   // Open modal on project click
   projectLinks.forEach(link => {
     link.addEventListener("click", (e) => {
