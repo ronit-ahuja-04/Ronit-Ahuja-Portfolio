@@ -67,6 +67,14 @@ const sidebarBtn = document.querySelector("[data-sidebar-btn]");
 // sidebar toggle functionality for mobile
 sidebarBtn.addEventListener("click", function () { elementToggleFunc(sidebar); });
 
+// menu toggle functionality for mobile
+const menuBtn = document.querySelector("[data-menu-btn]");
+const navbar = document.querySelector("[data-navbar]");
+
+if (menuBtn && navbar) {
+  menuBtn.addEventListener("click", function () { elementToggleFunc(navbar); });
+}
+
 
 
 // testimonials variables
@@ -213,6 +221,9 @@ for (let i = 0; i < navigationLinks.length; i++) {
     const targetPage = this.innerHTML.toLowerCase();
     window.location.hash = targetPage;
     activatePage(targetPage);
+    if (navbar && navbar.classList.contains("active")) {
+      navbar.classList.remove("active");
+    }
   });
 }
 

@@ -538,6 +538,32 @@ body.light-theme .avatar-dark { display: none; }
 
 
 /*-----------------------------------*\
+  #HAMBURGER MENU
+\*-----------------------------------*/
+
+.menu-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--eerie-black-1);
+  color: var(--orange-yellow-crayola);
+  border: 1px solid var(--jet);
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 24px;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: var(--shadow-1);
+  transition: var(--transition-1);
+}
+
+.menu-btn:hover {
+  background: var(--eerie-black-2);
+}
+
+/*-----------------------------------*\
   #NAVBAR
 \*-----------------------------------*/
 
@@ -553,6 +579,14 @@ body.light-theme .avatar-dark { display: none; }
   border-radius: 12px 12px 0 0;
   box-shadow: var(--glass-shadow);
   z-index: 5;
+  transform: translateY(100%);
+  visibility: hidden;
+  transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.navbar.active {
+  transform: translateY(0);
+  visibility: visible;
 }
 
 .navbar-list {
@@ -1795,6 +1829,12 @@ textarea.form-input::-webkit-resizer { display: none; }
     border-radius: 0 20px;
     padding: 0 20px;
     box-shadow: none;
+    transform: none;
+    visibility: visible;
+  }
+
+  .menu-btn {
+    display: none;
   }
 
   .navbar-list {
