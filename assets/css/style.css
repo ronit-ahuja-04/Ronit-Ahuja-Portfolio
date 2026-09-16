@@ -2125,7 +2125,7 @@ body.loaded .navbar { transition-delay: 0.4s; }
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 20px;
+  padding: 10px;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
   display: flex;
   flex-direction: column;
@@ -2137,16 +2137,16 @@ body.loaded .navbar { transition-delay: 0.4s; }
 .video-controls-row {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
   width: 100%;
 }
 
 .timeline-container {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
   width: 100%;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .video-timeline {
@@ -2158,10 +2158,10 @@ body.loaded .navbar { transition-delay: 0.4s; }
 
 .time-display {
   color: white;
-  font-size: 13px;
+  font-size: 11px;
   font-family: var(--ff-poppins);
   font-weight: 500;
-  min-width: 40px;
+  min-width: 35px;
   text-align: center;
 }
 
@@ -2172,7 +2172,7 @@ body.loaded .navbar { transition-delay: 0.4s; }
 
 .control-btn {
   color: white;
-  font-size: 24px;
+  font-size: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2191,7 +2191,7 @@ body.loaded .navbar { transition-delay: 0.4s; }
 }
 
 .volume-slider {
-  width: 80px;
+  width: 60px;
   cursor: pointer;
   accent-color: var(--orange-yellow-crayola);
 }
@@ -2208,8 +2208,8 @@ body.loaded .navbar { transition-delay: 0.4s; }
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2304,4 +2304,31 @@ body.loaded .navbar { transition-delay: 0.4s; }
   transform: scale(1.1);
 }
 
+/* --- MEDIA QUERIES FOR VIDEO CONTROLS --- */
+@media (min-width: 580px) {
+  .video-controls-overlay {
+    padding: 20px;
+  }
+  .video-controls-row {
+    gap: 15px;
+  }
+  .timeline-container {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .time-display {
+    font-size: 13px;
+    min-width: 40px;
+  }
+  .control-btn {
+    font-size: 24px;
+  }
+  .volume-slider {
+    width: 80px;
+  }
+  .glass-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
 
