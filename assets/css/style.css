@@ -2410,11 +2410,12 @@ body.loaded .navbar { transition-delay: 0.4s; }
   max-width: 100%;
 }
 
+.multi-video-layout .main-video-panel,
 .sub-video-panel {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  background: var(--eony);
+  background: var(--eerie-black-2);
   border-radius: 14px;
   padding: 15px;
   border: 1px solid var(--jet);
@@ -2464,7 +2465,8 @@ body.loaded .navbar { transition-delay: 0.4s; }
 .sub-video-wrapper {
   position: relative;
   width: 100%;
-  aspect-ratio: 9 / 16;
+  height: 100%;
+  min-height: 450px;
   background: #000;
   border-radius: 10px;
   overflow: hidden;
@@ -2486,6 +2488,6 @@ body.loaded .navbar { transition-delay: 0.4s; }
   }
   
   .sub-video-wrapper {
-    aspect-ratio: 16 / 9;
+    height: 60vh;
   }
 }

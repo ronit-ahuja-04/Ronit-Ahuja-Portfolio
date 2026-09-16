@@ -405,6 +405,8 @@ if (videoModalContainer && projectVideoPlayer) {
         // Multi-Video Setup
         videoModalContent.classList.add("multi-video-layout");
         subVideoPanel.style.display = "flex";
+        const mainTabs = document.getElementById("main-video-tabs");
+        if (mainTabs) mainTabs.style.display = "flex";
         
         const mainVideoSrc = link.getAttribute("data-video-main");
         projectVideoPlayer.src = mainVideoSrc;
@@ -448,6 +450,8 @@ if (videoModalContainer && projectVideoPlayer) {
         // Single Video Setup
         videoModalContent.classList.remove("multi-video-layout");
         subVideoPanel.style.display = "none";
+        const mainTabs = document.getElementById("main-video-tabs");
+        if (mainTabs) mainTabs.style.display = "none";
         
         const videoSrc = link.getAttribute("data-video");
         const videoPoster = link.getAttribute("data-poster");

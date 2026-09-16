@@ -715,7 +715,11 @@
         <ion-icon name="close-outline"></ion-icon>
       </button>
 
-      <div class="video-wrapper" id="main-video-wrapper">
+      <div class="main-video-panel" id="main-video-panel">
+        <div class="sub-video-tabs" id="main-video-tabs" style="display: none;">
+          <div class="sub-video-tab active" style="pointer-events: none; cursor: default;">Faculty Dashboard (Web)</div>
+        </div>
+        <div class="video-wrapper" id="main-video-wrapper">
         <video id="project-video-player" playsinline>
           <source src="" type="video/mp4">
           Your browser does not support the video tag.
@@ -758,20 +762,23 @@
             </svg>
           </button>
           
-          <div class="volume-container">
-            <button class="control-btn" data-mute title="Mute/Unmute">
-              <ion-icon name="volume-high-outline" class="vol-high-icon"></ion-icon>
-              <ion-icon name="volume-mute-outline" class="vol-mute-icon" style="display: none;"></ion-icon>
-            </button>
-            <input type="range" class="volume-slider" data-volume min="0" max="1" step="0.05" value="1">
-          </div>
+          <div class="video-controls-row right-controls">
+            <div class="volume-container">
+              <button class="control-btn glass-btn" data-mute title="Mute/Unmute">
+                <ion-icon name="volume-high-outline" class="vol-high-icon"></ion-icon>
+                <ion-icon name="volume-mute-outline" class="vol-mute-icon" style="display: none;"></ion-icon>
+              </button>
+              <input type="range" class="volume-slider" data-volume min="0" max="1" step="0.05" value="1">
+            </div>
 
-            <button class="control-btn" data-fullscreen title="Full Screen">
+            <button class="control-btn glass-btn" data-fullscreen title="Full Screen">
               <ion-icon name="expand-outline" class="expand-icon"></ion-icon>
               <ion-icon name="contract-outline" class="contract-icon" style="display: none;"></ion-icon>
             </button>
           </div>
+          </div>
         </div>
+      </div>
       </div>
 
       <!-- Right Sub-Video Panel (For Multi-Video Layouts) -->
