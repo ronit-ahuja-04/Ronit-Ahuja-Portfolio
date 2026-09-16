@@ -569,7 +569,14 @@
           <ul class="project-list">
 
             <li class="project-item  active" data-filter-item data-category="hybrid">
-              <a href="#">
+              <a href="#" data-multi-video="true" 
+                 data-video-main="./assets/videos/Faculty_walkthrough.mp4"
+                 data-video-sub-1="./assets/videos/student_enrolled.mp4"
+                 data-sub-title-1="Student Enrolled"
+                 data-video-sub-2="./assets/videos/student_not_enrolled.mp4"
+                 data-sub-title-2="Student Not Enrolled"
+                 data-video-sub-3="./assets/videos/proxy_confirmation.mp4"
+                 data-sub-title-3="Proxy Confirmed">
                 <figure class="project-img">
                   <div class="project-item-icon-box">
                     <ion-icon name="eye-outline"></ion-icon>
@@ -708,7 +715,7 @@
         <ion-icon name="close-outline"></ion-icon>
       </button>
 
-      <div class="video-wrapper">
+      <div class="video-wrapper" id="main-video-wrapper">
         <video id="project-video-player" playsinline>
           <source src="" type="video/mp4">
           Your browser does not support the video tag.
@@ -764,6 +771,18 @@
               <ion-icon name="contract-outline" class="contract-icon" style="display: none;"></ion-icon>
             </button>
           </div>
+        </div>
+      </div>
+
+      <!-- Right Sub-Video Panel (For Multi-Video Layouts) -->
+      <div class="sub-video-panel" id="sub-video-panel" style="display: none;">
+        <div class="sub-video-tabs" id="sub-video-tabs">
+          <!-- Tabs injected via JS -->
+        </div>
+        <div class="sub-video-wrapper">
+          <video id="sub-video-player" playsinline controls>
+            <source src="" type="video/mp4">
+          </video>
         </div>
       </div>
     </section>

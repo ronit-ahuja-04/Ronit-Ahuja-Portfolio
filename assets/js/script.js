@@ -331,8 +331,11 @@ const videoModalContainer = document.querySelector("[data-video-modal-container]
 const videoOverlay = document.querySelector("[data-video-overlay]");
 const videoModalCloseBtn = document.querySelector("[data-video-modal-close-btn]");
 const projectVideoPlayer = document.getElementById("project-video-player");
-const projectLinks = document.querySelectorAll(".project-item a[data-video]");
+const projectLinks = document.querySelectorAll(".project-item a[data-video], .project-item a[data-multi-video]");
 const videoModalContent = document.querySelector(".video-modal-content");
+const subVideoPanel = document.getElementById("sub-video-panel");
+const subVideoTabs = document.getElementById("sub-video-tabs");
+const subVideoPlayer = document.getElementById("sub-video-player");
 
 // Control buttons
 const btnPlayPause = document.querySelector("[data-play-pause]");
@@ -352,6 +355,10 @@ const closeVideoModal = () => {
     if (projectVideoPlayer) {
       projectVideoPlayer.pause();
       projectVideoPlayer.currentTime = 0;
+    }
+    if (subVideoPlayer) {
+      subVideoPlayer.pause();
+      subVideoPlayer.currentTime = 0;
     }
   }
 };
@@ -391,18 +398,70 @@ if (videoModalContainer && projectVideoPlayer) {
   projectLinks.forEach(link => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
-      const videoSrc = link.getAttribute("data-video");
-      const videoPoster = link.getAttribute("data-poster");
-      if (videoSrc) {
-        projectVideoPlayer.src = videoSrc;
-        if (videoPoster) {
-          projectVideoPlayer.poster = videoPoster;
-        } else {
-          projectVideoPlayer.removeAttribute("poster");
+      
+      const isMultiVideo = link.getAttribute("data-multi-video") === "true";
+      
+      if (isMultiVideo) {
+        // Multi-Video Setup
+        videoModalContent.classList.add("multi-video-layout");
+        subVideoPanel.style.display = "flex";
+        
+        const mainVideoSrc = link.getAttribute("data-video-main");
+        projectVideoPlayer.src = mainVideoSrc;
+        projectVideoPlayer.removeAttribute("poster");
+        
+        // Setup Tabs and Sub-Videos
+        subVideoTabs.innerHTML = "";
+        const subVideos = [];
+        for (let i = 1; i <= 3; i++) {
+          const vSrc = link.getAttribute(`data-video-sub-${i}`);
+          const vTitle = link.getAttribute(`data-sub-title-${i}`);
+          if (vSrc && vTitle) {
+            subVideos.push({ src: vSrc, title: vTitle });
+          }
         }
+        
+        if (subVideos.length > 0) {
+          subVideoPlayer.src = subVideos[0].src;
+          
+          subVideos.forEach((vid, index) => {
+            const btn = document.createElement("button");
+            btn.className = `sub-video-tab ${index === 0 ? "active" : ""}`;
+            btn.textContent = vid.title;
+            btn.addEventListener("click", () => {
+              // Switch tab
+              document.querySelectorAll(".sub-video-tab").forEach(t => t.classList.remove("active"));
+              btn.classList.add("active");
+              // Change video
+              subVideoPlayer.src = vid.src;
+              subVideoPlayer.play().catch(err => console.log(err));
+            });
+            subVideoTabs.appendChild(btn);
+          });
+        }
+        
         videoModalContainer.classList.add("active");
         projectVideoPlayer.play().catch(err => console.log("Autoplay prevented:", err));
         updatePlayPauseIcon();
+        
+      } else {
+        // Single Video Setup
+        videoModalContent.classList.remove("multi-video-layout");
+        subVideoPanel.style.display = "none";
+        
+        const videoSrc = link.getAttribute("data-video");
+        const videoPoster = link.getAttribute("data-poster");
+        if (videoSrc) {
+          projectVideoPlayer.src = videoSrc;
+          if (videoPoster) {
+            projectVideoPlayer.poster = videoPoster;
+          } else {
+            projectVideoPlayer.removeAttribute("poster");
+          }
+          videoModalContainer.classList.add("active");
+          projectVideoPlayer.play().catch(err => console.log("Autoplay prevented:", err));
+          updatePlayPauseIcon();
+        }
       }
     });
   });
