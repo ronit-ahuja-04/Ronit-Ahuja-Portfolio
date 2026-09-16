@@ -491,6 +491,33 @@ if (videoModalContainer && projectVideoPlayer) {
     }
   });
 
+  // Timeline logic
+  const videoTimeline = document.getElementById("video-timeline");
+  const currentTimeElem = document.getElementById("current-time");
+  const videoDurationElem = document.getElementById("video-duration");
+
+  const formatTime = (time) => {
+    let min = Math.floor(time / 60);
+    let sec = Math.floor(time % 60);
+    sec = sec < 10 ? `0${sec}` : sec;
+    return `${min}:${sec}`;
+  };
+
+  projectVideoPlayer.addEventListener("loadedmetadata", () => {
+    videoTimeline.max = projectVideoPlayer.duration;
+    videoDurationElem.textContent = formatTime(projectVideoPlayer.duration);
+  });
+
+  projectVideoPlayer.addEventListener("timeupdate", () => {
+    videoTimeline.value = projectVideoPlayer.currentTime;
+    currentTimeElem.textContent = formatTime(projectVideoPlayer.currentTime);
+  });
+
+  videoTimeline.addEventListener("input", (e) => {
+    projectVideoPlayer.currentTime = e.target.value;
+    currentTimeElem.textContent = formatTime(e.target.value);
+  });
+
   // Keyboard Shortcuts
   document.addEventListener("keydown", (e) => {
     if (!videoModalContainer.classList.contains("active")) return;

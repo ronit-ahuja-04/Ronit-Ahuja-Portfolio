@@ -2126,13 +2126,43 @@ body.loaded .navbar { transition-delay: 0.4s; }
   left: 0;
   width: 100%;
   padding: 20px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
   display: flex;
-  align-items: center;
-  gap: 15px;
+  flex-direction: column;
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
+}
+
+.video-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.timeline-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.video-timeline {
+  flex-grow: 1;
+  cursor: pointer;
+  accent-color: var(--orange-yellow-crayola);
+  height: 4px;
+}
+
+.time-display {
+  color: white;
+  font-size: 13px;
+  font-family: var(--ff-poppins);
+  font-weight: 500;
+  min-width: 40px;
+  text-align: center;
 }
 
 .video-wrapper:hover .video-controls-overlay {
